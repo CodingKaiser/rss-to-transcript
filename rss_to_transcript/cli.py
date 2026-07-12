@@ -9,8 +9,6 @@ from rss_to_transcript.download import download
 from rss_to_transcript.feed import Episode, fetch_episodes
 from rss_to_transcript.transcribe import load_model, transcribe
 
-DEFAULT_FEED = "REDACTED"
-
 app = typer.Typer(
     help="Download and locally transcribe recent podcast episodes from an RSS feed.",
     add_completion=False,
@@ -28,7 +26,7 @@ def _label(ep: Episode) -> str:
 
 @app.command()
 def run(
-    feed: Annotated[str, typer.Option(help="Podcast RSS feed URL.")] = DEFAULT_FEED,
+    feed: Annotated[str, typer.Option(help="Podcast RSS feed URL.")],
     count: Annotated[int, typer.Option(help="Number of recent episodes to list.")] = 10,
     model: Annotated[str, typer.Option(help="Whisper model size (tiny/base/small/medium/large-v3).")] = "base",
     output: Annotated[Path, typer.Option(help="Directory for audio and transcripts.")] = Path("downloads"),

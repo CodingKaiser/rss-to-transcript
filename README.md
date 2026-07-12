@@ -13,7 +13,7 @@ uv sync
 ## Usage
 
 ```bash
-uv run rss-to-transcript
+uv run rss-to-transcript --feed https://example.com/podcast/rss
 ```
 
 You'll see the most recent episodes in an interactive checkbox list. Use the
@@ -31,7 +31,7 @@ Transcripts are written one timestamped line per segment:
 
 | Option     | Default                                        | Description                                        |
 | ---------- | ---------------------------------------------- | -------------------------------------------------- |
-| `--feed`   | `REDACTED`    | Podcast RSS feed URL                               |
+| `--feed`   | _(required)_                                   | Podcast RSS feed URL                               |
 | `--count`  | `10`                                           | Number of recent episodes to list                  |
 | `--model`  | `base`                                         | Whisper model size: `tiny`/`base`/`small`/`medium`/`large-v3` |
 | `--output` | `downloads`                                    | Directory for audio and transcripts                |

@@ -15,6 +15,7 @@ dependencies = [
 
 [project.scripts]
 rss-to-transcript = "main:main"
+rss_to_transcript = "main:main"
 
 [build-system]
 requires = ["hatchling"]
