@@ -20,6 +20,13 @@ You'll see the most recent episodes in an interactive checkbox list. Use the
 arrow keys and space to select, then Enter to confirm. Each selected episode is
 downloaded and transcribed; the `.mp3` and `.txt` are written to `downloads/`.
 
+Transcripts are written one timestamped line per segment:
+
+```
+[00:00:06] Hallo und herzlich willkommen.
+[00:00:09] Hallo Wolfgang.
+```
+
 ### Options
 
 | Option     | Default                                        | Description                                        |
