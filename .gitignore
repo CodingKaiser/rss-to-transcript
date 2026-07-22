@@ -11,3 +11,6 @@ wheels/
 
 # Downloaded audio and transcripts
 downloads/
+
+# MacOS
+.DS_Store
