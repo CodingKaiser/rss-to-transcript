@@ -45,17 +45,27 @@ EMPTY_FEED = """<?xml version="1.0" encoding="UTF-8"?>
 
 
 def test_returns_episodes_in_feed_order_newest_first():
-    eps = fetch_episodes(FEED, count=10)
+    eps = fetch_episodes(FEED)
     assert [e.title for e in eps] == ["Newest Episode", "Middle Episode", "Oldest Episode"]
 
 
-def test_respects_count_limit():
-    eps = fetch_episodes(FEED, count=2)
+def test_respects_limit():
+    eps = fetch_episodes(FEED, limit=2)
     assert [e.title for e in eps] == ["Newest Episode", "Middle Episode"]
 
 
+def test_no_limit_returns_every_episode():
+    eps = fetch_episodes(FEED, limit=None)
+    assert len(eps) == 3
+
+
+def test_limit_larger_than_feed_returns_all():
+    eps = fetch_episodes(FEED, limit=99)
+    assert len(eps) == 3
+
+
 def test_extracts_audio_url_and_metadata():
-    ep = fetch_episodes(FEED, count=1)[0]
+    ep = fetch_episodes(FEED, limit=1)[0]
     assert isinstance(ep, Episode)
     assert ep.audio_url == "http://cdn.example/newest.mp3"
     assert ep.published == datetime(2026, 7, 8, 6, 0, 0)
@@ -63,15 +73,15 @@ def test_extracts_audio_url_and_metadata():
 
 
 def test_skips_entries_without_a_playable_enclosure():
-    eps = fetch_episodes(FEED_NO_ENCLOSURE, count=10)
+    eps = fetch_episodes(FEED_NO_ENCLOSURE)
     assert [e.title for e in eps] == ["Has audio"]
 
 
 def test_missing_pubdate_yields_none_published():
-    ep = fetch_episodes(FEED_NO_ENCLOSURE, count=1)[0]
+    ep = fetch_episodes(FEED_NO_ENCLOSURE, limit=1)[0]
     assert ep.published is None
 
 
 def test_empty_feed_raises_valueerror():
     with pytest.raises(ValueError):
-        fetch_episodes(EMPTY_FEED, count=10)
+        fetch_episodes(EMPTY_FEED)

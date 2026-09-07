@@ -1,12 +1,13 @@
 from pathlib import Path
 from typing import Annotated
 
-import questionary
 import typer
+from questionary.prompts.common import Choice
 from rich.console import Console
 
 from rss_to_transcript.download import download
 from rss_to_transcript.feed import Episode, fetch_episodes
+from rss_to_transcript.picker import VISIBLE_ROWS, checkbox_scrolling
 from rss_to_transcript.transcribe import load_model, transcribe
 
 app = typer.Typer(
@@ -27,21 +28,24 @@ def _label(ep: Episode) -> str:
 @app.command()
 def run(
     feed: Annotated[str, typer.Option(help="Podcast RSS feed URL.")],
-    count: Annotated[int, typer.Option(help="Number of recent episodes to list.")] = 10,
+    rows: Annotated[int, typer.Option(help="Episodes visible at once in the picker.")] = VISIBLE_ROWS,
+    limit: Annotated[
+        int | None, typer.Option(help="Only load the newest N episodes (default: the whole feed).")
+    ] = None,
     model: Annotated[str, typer.Option(help="Whisper model size (tiny/base/small/medium/large-v3).")] = "base",
     output: Annotated[Path, typer.Option(help="Directory for audio and transcripts.")] = Path("downloads"),
 ) -> None:
-    """Select recent episodes, then download and transcribe each one."""
+    """Search the feed's episodes, then download and transcribe the selected ones."""
     try:
-        episodes = fetch_episodes(feed, count)
+        episodes = fetch_episodes(feed, limit)
     except Exception as exc:  # feedparser is lenient; surface fetch/parse issues cleanly
         console.print(f"[red]Could not read feed:[/red] {exc}")
         raise typer.Exit(1)
 
-    choices = [questionary.Choice(title=_label(ep), value=ep) for ep in episodes]
-    selected: list[Episode] | None = questionary.checkbox(
-        "Select episodes to download and transcribe:", choices=choices
-    ).ask()
+    choices = [Choice(title=_label(ep), value=ep) for ep in episodes]
+    selected: list[Episode] | None = checkbox_scrolling(
+        f"Select episodes ({len(episodes)} in feed):", choices, visible_rows=rows
+    )
 
     if not selected:
         console.print("No episodes selected. Nothing to do.")

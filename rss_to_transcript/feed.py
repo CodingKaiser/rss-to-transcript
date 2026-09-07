@@ -32,12 +32,13 @@ def _published(entry) -> datetime | None:
     return datetime(*parsed[:6], tzinfo=timezone.utc).replace(tzinfo=None)
 
 
-def fetch_episodes(feed: str, count: int) -> list[Episode]:
-    """Parse a podcast feed (URL, path, or raw RSS string) into recent episodes.
+def fetch_episodes(feed: str, limit: int | None = None) -> list[Episode]:
+    """Parse a podcast feed (URL, path, or raw RSS string) into episodes.
 
-    Episodes are returned in feed order (newest first), limited to ``count``.
-    Entries without a playable enclosure are skipped. Raises ValueError if the
-    feed yields no usable episodes.
+    Episodes are returned in feed order (newest first). ``limit`` caps how many
+    are returned; ``None`` (the default) returns every episode the feed
+    publishes. Entries without a playable enclosure are skipped. Raises
+    ValueError if the feed yields no usable episodes.
     """
     parsed = feedparser.parse(feed)
     episodes: list[Episode] = []
@@ -53,7 +54,7 @@ def fetch_episodes(feed: str, count: int) -> list[Episode]:
                 duration=getattr(entry, "itunes_duration", None),
             )
         )
-        if len(episodes) >= count:
+        if limit is not None and len(episodes) >= limit:
             break
 
     if not episodes:
