@@ -64,7 +64,7 @@ def run(
     for ep in selected:
         try:
             mp3_path = download(ep, output)
-            txt_path = transcribe(whisper, mp3_path, output, timestamps)
+            txt_path = transcribe(whisper, ep, mp3_path, output, timestamps)
             transcripts.append(txt_path)
             console.print(f"[green]✓[/green] {txt_path}")
         # One bad episode shouldn't abort the batch. faster-whisper/ctranslate2 export

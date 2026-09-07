@@ -10,6 +10,7 @@ class Episode:
     published: datetime | None
     audio_url: str
     duration: str | None
+    podcast: str
 
 
 def _audio_url(entry) -> str | None:
@@ -37,10 +38,12 @@ def fetch_episodes(feed: str, limit: int | None = None) -> list[Episode]:
 
     Episodes are returned in feed order (newest first). ``limit`` caps how many
     are returned; ``None`` (the default) returns every episode the feed
-    publishes. Entries without a playable enclosure are skipped. Raises
-    ValueError if the feed yields no usable episodes.
+    publishes. Entries without a playable enclosure are skipped. Every episode
+    carries the channel title in ``podcast``. Raises ValueError if the feed
+    yields no usable episodes.
     """
     parsed = feedparser.parse(feed)
+    podcast = getattr(parsed.feed, "title", None) or "Unknown feed"
     episodes: list[Episode] = []
     for entry in parsed.entries:
         url = _audio_url(entry)
@@ -52,6 +55,7 @@ def fetch_episodes(feed: str, limit: int | None = None) -> list[Episode]:
                 published=_published(entry),
                 audio_url=url,
                 duration=getattr(entry, "itunes_duration", None),
+                podcast=podcast,
             )
         )
         if limit is not None and len(episodes) >= limit:

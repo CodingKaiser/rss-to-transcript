@@ -72,6 +72,11 @@ def test_extracts_audio_url_and_metadata():
     assert ep.duration == "32:10"
 
 
+def test_carries_the_channel_title_on_each_episode():
+    eps = fetch_episodes(FEED)
+    assert {e.podcast for e in eps} == {"Test Podcast"}
+
+
 def test_skips_entries_without_a_playable_enclosure():
     eps = fetch_episodes(FEED_NO_ENCLOSURE)
     assert [e.title for e in eps] == ["Has audio"]

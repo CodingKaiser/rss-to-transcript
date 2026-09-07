@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from rss_to_transcript.transcribe import format_segments
+from rss_to_transcript.transcribe import format_header, format_segments
 
 
 @dataclass
@@ -23,6 +23,11 @@ def test_timestamp_handles_hours_and_minutes():
     segs = [FakeSegment(3723.0, 3725.0, "later")]  # 1h 2m 3s
     out = format_segments(segs)
     assert out == "[01:02:03] later"
+
+
+def test_header_names_the_episode_and_its_feed():
+    out = format_header("Wie geht es weiter mit der Rente?", "Flachlage der Kommune")
+    assert out == "# Episode: Wie geht es weiter mit der Rente?\n# Feed: Flachlage der Kommune"
 
 
 def test_omits_timestamps_when_disabled():

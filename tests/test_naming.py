@@ -5,7 +5,7 @@ from rss_to_transcript.naming import base_name, slugify
 
 
 def _episode(title: str, published: datetime | None) -> Episode:
-    return Episode(title=title, published=published, audio_url="http://x/a.mp3", duration=None)
+    return Episode(title=title, published=published, audio_url="http://x/a.mp3", duration=None, podcast="Test Podcast")
 
 
 def test_slugify_lowercases_and_hyphenates_spaces():
