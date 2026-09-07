@@ -41,6 +41,13 @@ Transcripts are written one timestamped line per segment:
 [00:00:09] Hallo Wolfgang.
 ```
 
+Pass `--no-timestamps` to write the plain text without the `[HH:MM:SS]` prefixes:
+
+```
+Hallo und herzlich willkommen.
+Hallo Wolfgang.
+```
+
 ### Options
 
 | Option     | Default                                        | Description                                        |
@@ -50,6 +57,7 @@ Transcripts are written one timestamped line per segment:
 | `--limit`  | _(whole feed)_                                 | Only load the newest N episodes                    |
 | `--model`  | `base`                                         | Whisper model size: `tiny`/`base`/`small`/`medium`/`large-v3` |
 | `--output` | `downloads`                                    | Directory for audio and transcripts                |
+| `--timestamps` / `--no-timestamps` | `--timestamps`         | Prefix each transcript line with `[HH:MM:SS]`      |
 
 ```bash
 uv run rss-to-transcript --feed https://example.com/rss --rows 20 --model small

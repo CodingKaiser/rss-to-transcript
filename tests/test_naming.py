@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 from rss_to_transcript.feed import Episode
 from rss_to_transcript.naming import base_name, slugify
@@ -25,7 +25,7 @@ def test_slugify_falls_back_when_empty():
 
 
 def test_base_name_prefixes_date():
-    ep = _episode("Hello World", datetime(2026, 7, 8))
+    ep = _episode("Hello World", datetime(2026, 7, 8, tzinfo=UTC))
     assert base_name(ep) == "2026-07-08-hello-world"
 
 

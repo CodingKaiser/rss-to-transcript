@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import feedparser
 
@@ -28,8 +28,8 @@ def _published(entry) -> datetime | None:
     parsed = getattr(entry, "published_parsed", None)
     if parsed is None:
         return None
-    # published_parsed is a UTC struct_time; drop tzinfo for a naive local-agnostic value.
-    return datetime(*parsed[:6], tzinfo=timezone.utc).replace(tzinfo=None)
+    # published_parsed is a UTC struct_time; keep it tz-aware.
+    return datetime(*parsed[:6], tzinfo=UTC)
 
 
 def fetch_episodes(feed: str, limit: int | None = None) -> list[Episode]:

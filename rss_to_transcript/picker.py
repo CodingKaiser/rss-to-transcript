@@ -49,9 +49,7 @@ def checkbox_scrolling(
             count = len(ic.selected_options)
             tokens.append(("class:answer", f"done ({count} selection(s))"))
         else:
-            tokens.append(
-                ("class:instruction", "(type to filter, <space> to select, <enter> to confirm)")
-            )
+            tokens.append(("class:instruction", "(type to filter, <space> to select, <enter> to confirm)"))
         return tokens
 
     def get_status_tokens() -> FormattedText:

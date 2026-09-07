@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 import pytest
 
@@ -68,7 +68,7 @@ def test_extracts_audio_url_and_metadata():
     ep = fetch_episodes(FEED, limit=1)[0]
     assert isinstance(ep, Episode)
     assert ep.audio_url == "http://cdn.example/newest.mp3"
-    assert ep.published == datetime(2026, 7, 8, 6, 0, 0)
+    assert ep.published == datetime(2026, 7, 8, 6, 0, 0, tzinfo=UTC)
     assert ep.duration == "32:10"
 
 

@@ -23,3 +23,12 @@ def test_timestamp_handles_hours_and_minutes():
     segs = [FakeSegment(3723.0, 3725.0, "later")]  # 1h 2m 3s
     out = format_segments(segs)
     assert out == "[01:02:03] later"
+
+
+def test_omits_timestamps_when_disabled():
+    segs = [
+        FakeSegment(4.0, 6.0, " Hallo und herzlich willkommen."),
+        FakeSegment(7.2, 8.0, " Hallo Wolfgang."),
+    ]
+    out = format_segments(segs, timestamps=False)
+    assert out == "Hallo und herzlich willkommen.\nHallo Wolfgang."

@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Annotated
 
+import httpx
 import typer
 from questionary.prompts.common import Choice
 from rich.console import Console
@@ -34,11 +35,14 @@ def run(
     ] = None,
     model: Annotated[str, typer.Option(help="Whisper model size (tiny/base/small/medium/large-v3).")] = "base",
     output: Annotated[Path, typer.Option(help="Directory for audio and transcripts.")] = Path("downloads"),
+    timestamps: Annotated[
+        bool, typer.Option("--timestamps/--no-timestamps", help="Prefix each transcript line with [HH:MM:SS].")
+    ] = True,
 ) -> None:
     """Search the feed's episodes, then download and transcribe the selected ones."""
     try:
         episodes = fetch_episodes(feed, limit)
-    except Exception as exc:  # feedparser is lenient; surface fetch/parse issues cleanly
+    except (ValueError, OSError) as exc:
         console.print(f"[red]Could not read feed:[/red] {exc}")
         raise typer.Exit(1)
 
@@ -60,10 +64,12 @@ def run(
     for ep in selected:
         try:
             mp3_path = download(ep, output)
-            txt_path = transcribe(whisper, mp3_path, output)
+            txt_path = transcribe(whisper, mp3_path, output, timestamps)
             transcripts.append(txt_path)
             console.print(f"[green]✓[/green] {txt_path}")
-        except Exception as exc:  # one bad episode shouldn't abort the batch
+        # One bad episode shouldn't abort the batch. faster-whisper/ctranslate2 export
+        # no exception types, so decode failures arrive as RuntimeError/ValueError.
+        except (httpx.HTTPError, OSError, RuntimeError, ValueError) as exc:
             console.print(f"[red]✗ {ep.title}:[/red] {exc}")
 
     if transcripts:
